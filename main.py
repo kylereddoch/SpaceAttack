@@ -1,24 +1,31 @@
-player_name = input("Enter your name, player: ")
+def show_intro(player_name=None):
+    # Print intro
+    print('\nWelcome to Space Attack,', player_name + '!', '\n', '------------------------------', '\n',
+          '*** STORYLINE ***', '\n',
+          'You are an astronaut on the maiden voyage to Mars to conduct scientific research ', '\n',
+          'about the atmosphere and environment of the planet. You are suddenly awakened by ', '\n',
+          'the alarm system halfway through the journey to Mars. You are both shocked and scared ', '\n',
+          'as this is not normal. You get out of your sleeping cubby in the Living Quarters and ', '\n',
+          'check the security monitors. You notice there has been a breach in the spaceship by an ', '\n',
+          'unidentified lifeform. OH NO…AN ALIEN! You think to yourself. Your quick-thinking kicks ', '\n',
+          'into overdrive, and you have an idea. There are items around the spaceship that can help ', '\n',
+          'you defeat the alien and take back the spacecraft. Find all the items around the ship (7) ', '\n',
+          'before encountering the alien and save the ship. Encounter the alien before having all the ', '\n',
+          'items, and your ship is doomed!')
 
 
-def main_menu():
-    # Print instructions and intro
-    print('\nWelcome to Space Attack,', player_name + '!')
-    print('------------------------------')
-    print('*** STORYLINE ***')
-    print('You are an astronaut on the maiden voyage to Mars to conduct scientific research about the atmosphere and '
-          '\nenvironment of the planet. You are suddenly awakened by the alarm system halfway through the journey to '
-          '\nMars. You are both shocked and scared as this is not normal. You get out of your sleeping cubby in the '
-          '\nLiving Quarters and check the security monitors. You notice there has been a breach in the spaceship by '
-          '\nan unidentified lifeform. OH NO…AN ALIEN! You think to yourself. Your quick-thinking kicks into '
-          '\noverdrive, and you have an idea. There are items around the spaceship that can help you defeat the alien '
-          '\nand take back the spacecraft. Find all the items around the ship (7) before encountering the alien and '
-          '\nsave the ship. Encounter the alien before having all the items, and your ship is doomed!')
-    print('------------------------------')
-    print('*** INSTRUCTIONS ***')
-    print('To move about, type commands: go South, go North, go East, go West')
-    print('To add an item to your inventory, type: get "item name" (without quotes)')
-    print('------------------------------')
+def show_instructions():
+    # print instructions
+    print('------------------------------', '\n', '*** INSTRUCTIONS ***', '\n',
+          'To move about, type commands: go South, go North, go East, go West', '\n',
+          'To add an item to your inventory, type: get "item name" (without quotes)', '\n',
+          'To get the current game status, type: status', '\n',
+          'To show the instructions again, type: instructions', '\n',
+          'To quit the game, type: quit or exit', '\n', '------------------------------')
+
+
+def game_start():
+    # start game
     print('*** GAME START ***')
 
 
@@ -28,7 +35,7 @@ def move_between_rooms(current_room, move, rooms):
     return current_room
 
 
-def grab_item(current_room, move, rooms, inventory):
+def grab_item(current_room, rooms, inventory):
     # add item to inventory and remove it from the room
     inventory.append(rooms[current_room]['item'])
     del rooms[current_room]['item']
@@ -37,25 +44,34 @@ def grab_item(current_room, move, rooms, inventory):
 def main():
     # dictionary of connecting rooms with items
     rooms = {
-        'Living Quarters': {'South': 'Electrical Room', 'North': 'Cafeteria', 'East': 'Command & Navigation',
-                            'West': 'Security Room'},
+        'Living Quarters': {
+            'South': 'Electrical Room', 'North': 'Cafeteria', 'East': 'Command & Navigation',
+            'West': 'Security Room'
+        },
         'Command & Navigation': {'West': 'Living Quarters', 'item': 'Spacesuit'},
         'Cafeteria': {'South': 'Living Quarters', 'West': 'Medbay', 'item': 'Protein Bar'},
         'Security Room': {'West': 'Engine Room', 'East': 'Living Quarters', 'item': 'Flashlight'},
         'Medbay': {'East': 'Cafeteria', 'South': 'Engine Room', 'item': 'Oxygen Tank'},
-        'Engine Room': {'North': 'Medbay', 'South': 'Storage Room', 'East': 'Security Room', 'West': 'Reactor',
-                        'item': 'Emergency Beacon'},
+        'Engine Room': {
+            'North': 'Medbay', 'South': 'Storage Room', 'East': 'Security Room', 'West': 'Reactor',
+            'item': 'Emergency Beacon'
+        },
         'Storage Room': {'North': 'Engine Room', 'East': 'Electrical Room', 'item': 'Plasma Ray Gun'},
         'Electrical Room': {'North': 'Living Quarters', 'West': 'Storage Room', 'item': 'Electrical Detainment Net'},
         'Reactor': ''
     }
-    s = ' '
     # list for storing player inventory
     inventory = []
     # starting room
     current_room = 'Living Quarters'
-    # show the player the main menu
-    main_menu()
+    # get player name
+    player_name = input("Enter your name, player: ")
+    # show introduction
+    show_intro(player_name)
+    # show instructions
+    show_instructions()
+    # show game start
+    game_start()
 
     while True:
         # handle the case when player encounters the 'villain'
@@ -73,13 +89,17 @@ def main():
                 print('You have been killed by the alien and the ship has been destroyed!')
                 print('Thank you for playing Space Attack! Better luck next time', player_name + '.')
                 break
-        # Tell the user their current room, inventory and prompt for a move, ignores case
+        # Tell the user their current room, inventory
         print('You are in the ' + current_room)
-        print('You currently have:', inventory, 'in your inventory.')
+        if not inventory:  # if inventory is empty
+            print('You do not have any items in your inventory.')
+        else:  # if inventory is not empty
+            print('Your inventory contains:', ', '.join(inventory))
         # tell the user if there is an item in the room
         if current_room != 'Reactor' and 'item' in rooms[current_room].keys():
             print('You found the {}, let\'s pick it up.'.format(rooms[current_room]['item']))
         print('------------------------------')
+        # prompt for a move
         move = input('Enter your next move: ').title().split()
 
         # handle if the user enters a command to move to a new room
@@ -90,7 +110,14 @@ def main():
         elif len(move[0]) == 3 and move[0] == 'Get' and ' '.join(move[1:]) in rooms[current_room]['item']:
             print('You picked up the {}'.format(rooms[current_room]['item']))
             print('------------------------------')
-            grab_item(current_room, move, rooms, inventory)
+            grab_item(current_room, rooms, inventory)
+            continue
+        # handle if the user enters a command to show status
+        elif move == ['Status']:
+            continue
+        # handle if the user enters a command to show instructions
+        elif move == ['Instructions']:
+            show_instructions()
             continue
         # handle if the user enters a command to quit game
         elif move == ['Quit'] or move == ['Exit']:
