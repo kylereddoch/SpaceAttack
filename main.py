@@ -25,7 +25,7 @@ def show_instructions():
 
 
 def game_start():
-    # start game
+    # print start game
     print('*** GAME START ***')
 
 
@@ -91,10 +91,12 @@ def main():
                 break
         # Tell the user their current room, inventory
         print('You are in the ' + current_room)
+
         if not inventory:  # if inventory is empty
             print('You do not have any items in your inventory.')
         else:  # if inventory is not empty
             print('Your inventory contains:', ', '.join(inventory))
+
         # tell the user if there is an item in the room
         if current_room != 'Reactor' and 'item' in rooms[current_room].keys():
             print('You found the {}, let\'s pick it up.'.format(rooms[current_room]['item']))
